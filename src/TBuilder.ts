@@ -11,6 +11,7 @@
 import {TNode} from "./TNode";
 export class TBuilder {
     private static _callback:Function;
+    private static uid_count=0;
     static set callback(cb:Function) {
         TBuilder._callback=cb;
     }
@@ -90,5 +91,13 @@ export class TBuilder {
             "area","base","br","col","embed","hr","img",
             "input","link","meta","param","source","track","wbr"
         ].indexOf(tag.toLowerCase()) > -1;
+    }
+    static uid() {
+        TBuilder.uid_count++;
+        return "id"+TBuilder.uid_count;
+    }
+    // todo : should be elsewhere, test subclass?
+    static resetUid() {
+        TBuilder.uid_count=0;
     }
 }
