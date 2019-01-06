@@ -42,7 +42,10 @@ export class TNode {
     }
     removeStyle (key):this {
         this.styles.delete(key);
-        if (this.isAttachedToDom()) document.getElementById(this.id).style[key] = null;
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).style[key] = null;
+            if (this.callback) this.callback (this,'style','remove',key);
+        }
         return this;
     }
     addChild(child:TNode|string):this {
@@ -80,35 +83,53 @@ export class TNode {
     }
     addEvent(type:string,listener:Function):this {
         this.events.set(type,listener);
-        if (this.isAttachedToDom()) document.getElementById(this.id).addEventListener(type,<any>listener);
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).addEventListener(type,<any>listener);
+            if (this.callback) this.callback (this,'event','add',type);
+        }
         return this;
     }
     removeEvent(type:string):this {
-        if (this.isAttachedToDom()) document.getElementById(this.id).removeEventListener(type,<any>this.events.get(type));
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).removeEventListener(type,<any>this.events.get(type));
+            if (this.callback) this.callback (this,'event','remove',type);
+        }
         this.events.delete(type);
         return this;
     }
     addClass(clazz:string) {
         this.classes.push(clazz);
-        if (this.isAttachedToDom()) document.getElementById(this.id).classList.add(clazz);
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).classList.add(clazz);
+            if (this.callback) this.callback (this,'class','add',clazz);
+        }
         return this;
     }
     removeClass(clazz:string) {
         this.classes = this.classes.filter(item => item !== clazz);
-        if (this.isAttachedToDom()) document.getElementById(this.id).classList.remove(clazz);
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).classList.remove(clazz);
+            if (this.callback) this.callback (this,'class','remove',clazz);
+        }
         return this;
     }
     addProperty(property:string, value:string) {
         if (property!=='class' && property!=='style') {
             this.properties.set(property,value);
-            if (this.isAttachedToDom()) document.getElementById(this.id).setAttribute(property, value);
+            if (this.isAttachedToDom()) {
+                document.getElementById(this.id).setAttribute(property, value);
+                if (this.callback) this.callback (this,'property','add',property+"="+value);
+            }
         }
         return this;
     }
     removeProperty(property:string) {
         if (property!=='class' && property!=='style') {
             this.properties.delete(property);
-            if (this.isAttachedToDom()) document.getElementById(this.id).removeAttribute(property);
+            if (this.isAttachedToDom()) {
+                document.getElementById(this.id).removeAttribute(property);
+                if (this.callback) this.callback (this,'property','remove',property);
+            }
         }
         return this;
     }

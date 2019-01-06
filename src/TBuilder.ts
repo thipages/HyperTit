@@ -18,9 +18,19 @@ export class TBuilder {
     static addNode(tag:string='div'):TNode {
         return new TNode(tag, TBuilder.nodeCallback);
     }
-    static build(node:TNode) {
-        node.parent="body";
-        document.body.innerHTML=TBuilder.getNodeHtml(node);
+    static build(node:TNode, anchor="body") {
+        let id, element;
+        if (anchor.substr(0,1)==="#") {
+            id=anchor.substr(1);
+            element=document.getElementById(id);
+        } else if (anchor==='body') {
+            id = "body";
+            element=document.body
+        } else {
+            // todo: see DOMinus code
+        }
+        node.parent = id;
+        element.innerHTML = TBuilder.getNodeHtml(node);
         TBuilder.registerEvents(node);
     }
     static registerEvents (node:TNode, register=true):void {
