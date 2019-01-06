@@ -18,8 +18,9 @@ export class TNode {
     properties:Map<string,string>;
     events:Map<string,Function>;
     id:string;
+    private static uid_count=0;
     constructor(readonly tag:string, private readonly callback:Function) {
-        this.id=TNode.uid("id");
+        this.id=TNode.uid();
         this.parent=null;
         this.children=Array<TNode|string>();
         this.parentWrappers=Array<TNode>();
@@ -119,8 +120,8 @@ export class TNode {
         }
         return (typeof(node.parent)==='string');
     }
-    static uid(prefix:string=""):string {
-        let ran= '_' + Math.random().toString(36);
-        return prefix+ran.substr(3, 9);
+    private static uid() {
+        TNode.uid_count++;
+        return "id"+TNode.uid_count;
     }
 }
