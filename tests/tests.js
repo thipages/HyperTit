@@ -80,7 +80,7 @@ QUNIT.tests["empty"]=function () {
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.addNode();
+            node=HT.node();
             break;
         case OBJECT_NODE:
             node=h({});
@@ -97,7 +97,7 @@ QUNIT.tests["non_void"]=function () {
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.addNode('div');
+            node=HT.node('div');
             break;
         case OBJECT_NODE:
             node=h({tag:"div"});
@@ -113,7 +113,7 @@ QUNIT.tests["void"]=function () {
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.addNode("input");
+            node=HT.node("input");
             break;
         case OBJECT_NODE:
             node=h({tag:"input"});
@@ -130,7 +130,7 @@ QUNIT.tests["addStyle"]=function () {
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.addNode()
+            node=HT.node()
                 .addStyle("color","green");
             break;
         case OBJECT_NODE:
@@ -149,7 +149,7 @@ QUNIT.tests["content_empty"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node=HT
-                .addNode('div')
+                .node('div')
                 .addChild("");
             break;
         case OBJECT_NODE:
@@ -168,7 +168,7 @@ QUNIT.tests["content_string"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node = HT
-                .addNode('div')
+                .node('div')
                 .addChild("HyperTit");
             break;
         case OBJECT_NODE:
@@ -187,10 +187,10 @@ QUNIT.tests["content_array"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node=HT
-                .addNode("ul")
+                .node("ul")
                 .addChild(
                     HT
-                        .addNode("li")
+                        .node("li")
                         .addChild("item1")
                 );
             break;
@@ -213,7 +213,7 @@ QUNIT.tests["content_array"]=function () {
 QUNIT.tests_callback["addStyle"]=function () {
     let node;
     METHODS.init();
-    node=HT.addNode();
+    node=HT.node();
     METHODS.build(node,CALLBACK.handler);
     node.addStyle("background-color", "black");
     return ["id1","style","add", "background-color:black"];
@@ -221,7 +221,7 @@ QUNIT.tests_callback["addStyle"]=function () {
 QUNIT.tests_callback["event_postBuild"]=function () {
     let node;
     METHODS.init();
-    node=HT.addNode();
+    node=HT.node();
     METHODS.build(node,CALLBACK.handler);
     node.addEvent("click", ()=>{});
     return ["id1","event","add", "click"];
