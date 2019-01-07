@@ -8,7 +8,33 @@
  *
  *	 HyperTit Tit's hypertext
  */
+import {TNode} from "./TNode";
 import {TBuilder} from "./TBuilder";
-interface MyWindow extends Window{ ht: TBuilder }
+import {THelper} from "./THelper";
+export class HT {
+    static node(...data:any) :TNode {
+        if (data[0] instanceof Object)
+            return THelper.getObjectNode(data[0]);
+        else
+            return THelper.getArrayNode(<any>data);
+    }
+    static build(node:TNode, anchor:string='body', callback:Function=null):void {
+        TBuilder.build(node, anchor);
+        TBuilder.callback=callback;
+    }
+}
+export class HTest extends HT {
+    static getNodeHtml(node:TNode):string {
+        return TBuilder.getNodeHtml(node)
+    }
+    static resetUid():void {
+        TBuilder.resetUid();
+    }
+    static addNode(tag:string='div'):TNode {
+        return TBuilder.addNode(tag);
+    }
+}
+interface MyWindow extends Window { HyperTit: HT, HyperTitTest:HTest }
 declare var window: MyWindow;
-window.ht = TBuilder;
+window.HyperTit = HT;
+window.HyperTitTest = HTest;
