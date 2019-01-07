@@ -55,7 +55,7 @@ export class TBuilder {
         for (let wrapper of node.parentWrappers) {
             parts=TBuilder.getParts(wrapper);
             wrapperParts[0]+=parts[0];
-            wrapperParts[2]=wrapperParts[2]+parts[2];
+            wrapperParts[2]=parts[2]+wrapperParts[2];
         }
         wrapperParts[1]=TBuilder.getParts(node).join("");
         return wrapperParts.join("");
@@ -109,5 +109,27 @@ export class TBuilder {
     // todo : should be elsewhere, test subclass?
     static resetUid() {
         TBuilder.uid_count=0;
+    }
+    static updateNodeClass(node:TNode,raw_class:string):void {
+        for (let clazz of raw_class.split(" ")) {
+            if (clazz.trim()!=="") {
+                node.addClass(clazz);
+            }
+        }
+    }
+    static updateNodeStyle(node:TNode, raw_style:string):void {
+        let style,key,value;
+        for (let styles of raw_style.split(";")) {
+            if (styles.trim()!=="") {
+                style=styles.split(":");
+                if (style.length===2) {
+                    key=style[0].trim();
+                    value=style[1].trim();
+                    if (key!=="" && value !=="") {
+                        node.addStyle(key,value);
+                    }
+                }
+            }
+        }
     }
 }
