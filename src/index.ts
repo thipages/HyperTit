@@ -30,7 +30,7 @@ export class HTest extends HT {
     static resetUid():void {
         TBuilder.resetUid();
     }
-    static node(tag:string='div'):TNode {
+    static addNode(tag:string='div'):TNode {
         return TBuilder.node(tag);
     }
 }
