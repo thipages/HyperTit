@@ -1,3 +1,13 @@
+/*
+ * 	THelper.ts
+ *	Version 0.0.1
+ * 	https://github.com/thipages/HyperTit
+ *
+ * 	Licensed under the MIT license:
+ * 	http://www.opensource.org/licenses/MIT
+ *
+ *	 HyperTit Tit's hypertext
+ */
 import {TNode} from "./TNode";
 import {TBuilder} from "./TBuilder";
 export class THelper {
