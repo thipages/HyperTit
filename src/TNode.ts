@@ -29,7 +29,7 @@ export class TNode {
         this.events=new Map<string,Function>();
     }
     wrap(node:TNode):this {
-        if (!this.isAttachedToDom()) this.parentWrappers.unshift(node);
+        if (node.tag==='div' && !this.isAttachedToDom()) this.parentWrappers.unshift(node);
         return this;
     }
     addStyle (key,value):this {

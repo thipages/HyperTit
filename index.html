@@ -8,7 +8,9 @@
 
 <script src="bin/hypertit.js"></script>
 <script>
-    let ht=window.ht;
+    let ht = window.HyperTit.node;
+    console.log(ht({tag:"ul"}), ht("rr"));
+    /*let ht=window.ht;
     ht.callback=callback;
     let li1 = ht
         .addNode("li")
@@ -31,7 +33,7 @@
 
     function callback(node,type,action,data) {
         console.log(node,type,action,data);
-    }
+    }*/
 </script>
 </body>
 </html>
