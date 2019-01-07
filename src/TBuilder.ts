@@ -15,7 +15,7 @@ export class TBuilder {
     static set callback(cb:Function) {
         TBuilder._callback=cb;
     }
-    static addNode(tag:string='div'):TNode {
+    static node(tag:string='div'):TNode {
         return new TNode(tag, TBuilder.nodeCallback);
     }
     static build(node:TNode, anchor="body") {

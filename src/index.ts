@@ -31,7 +31,7 @@ export class HTest extends HT {
         TBuilder.resetUid();
     }
     static addNode(tag:string='div'):TNode {
-        return TBuilder.addNode(tag);
+        return TBuilder.node(tag);
     }
 }
 interface MyWindow extends Window { HyperTit: HT, HyperTitTest:HTest }

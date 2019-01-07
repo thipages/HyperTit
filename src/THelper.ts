@@ -4,7 +4,7 @@ export class THelper {
     static getObjectNode (data:any):TNode {
         let node, html;
         if (!data.hasOwnProperty('tag')) data.tag='div';
-        node=TBuilder.addNode(data.tag);
+        node=TBuilder.node(data.tag);
         delete data.tag;
         if (data.hasOwnProperty("class")){
             TBuilder.updateNodeClass(node,data['class']);
@@ -45,7 +45,7 @@ export class THelper {
     static getArrayNode(...data:any): TNode {
         let node;
         if (!data) {
-            node= TBuilder.addNode();
+            node= TBuilder.node();
         } else if (typeof(data[0]==='string')) {
             node= THelper.getNodeFromExtendedTag(data[0]);
             if (data[1]) {

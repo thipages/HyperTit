@@ -8,32 +8,30 @@
 
 <script src="bin/hypertit.js"></script>
 <script>
-    let ht = window.HyperTit.node;
-    console.log(ht({tag:"ul"}), ht("rr"));
-    /*let ht=window.ht;
-    ht.callback=callback;
-    let li1 = ht
-        .addNode("li")
-        .addChild("li1");
-    let li2 = ht
-        .addNode("li")
-        .addChild("li2")
-        .addEvent("mouseover",()=>console.log("li2 mouseover"));
-    let ul = ht
-        .addNode("ul")
-        .addChild(li1)
-        .addChild(li2)
-        .addStyle("background-color","#cecece");
-    ht.build(ul);
-    let li3 = ht
-        .addNode("li")
-        .addChild("li3")
-        .addEvent("click",()=>console.log("li3 click"));
+    let HT=window.HyperTitTest;
+    let h=window.HyperTitTest.node;
+    let ul = h(
+        {
+            tag:"ul",
+            style:"background-color:#cecece",
+            html:[
+                {tag:"li", html:"item1"},
+                {tag:"li", html:"item2"}
+            ]
+        }
+    );
+    HT.build(ul,"body",callback);
+    let li3 = h(
+        {
+            tag:"li",
+            html:"item3",
+            onclick:()=>console.log("li3 click")
+        }
+    );
     ul.addChild(li3);
-
     function callback(node,type,action,data) {
         console.log(node,type,action,data);
-    }*/
+    }
 </script>
 </body>
 </html>
