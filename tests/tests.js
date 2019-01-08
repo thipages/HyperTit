@@ -5,7 +5,7 @@ let CONTEXTS = [DIRECT_NODE,OBJECT_NODE];let QUNIT={};
 let METHODS = {};
 let currentContext;
 let HT=window.HyperTitTest;
-let h=window.HyperTitTest.node;
+let h=window.HyperTitTest.getNode;
 let CALLBACK=function (node,type,action,data) {
     this.note=node;
     this.type=type;
@@ -16,7 +16,6 @@ let CALLBACK=function (node,type,action,data) {
     }
 };
 CALLBACK.handler = function (node, type, action, data) {
-    console.log("aaaa", type)
     CALLBACK.result=new CALLBACK(node, type, action, data);
 };
 QUNIT.tests={};
@@ -90,12 +89,13 @@ QUnit.test("JS_spread_operator", function (assert) {
         if (aCase.length===3) assert.ok(typeof(aCase[0][0])===aCase[2]);
     });
 });
+
 QUNIT.tests["empty"]=function () {
     let node;
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.createTNode();
+            node=HT.getNode();
             break;
         case OBJECT_NODE:
             node=h({});
@@ -112,7 +112,7 @@ QUNIT.tests["non_void"]=function () {
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.createTNode('div');
+            node=HT.getNode('div');
             break;
         case OBJECT_NODE:
             node=h({tag:"div"});
@@ -123,12 +123,13 @@ QUNIT.tests["non_void"]=function () {
     }
     return [node,`<div id="id1"></div>`];
 };
+
 QUNIT.tests["void"]=function () {
     let node;
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.createTNode("input");
+            node=h("input");
             break;
         case OBJECT_NODE:
             node=h({tag:"input"});
@@ -140,12 +141,13 @@ QUNIT.tests["void"]=function () {
     }
     return [node,`<input id="id1"/>`];
 };
+
 QUNIT.tests["addStyle"]=function () {
     let node;
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
-            node=HT.createTNode()
+            node=HT.getNode()
                 .addStyle("color","green");
             break;
         case OBJECT_NODE:
@@ -164,7 +166,7 @@ QUNIT.tests["content_empty"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node=HT
-                .createTNode('div')
+                .getNode('div')
                 .addChild("");
             break;
         case OBJECT_NODE:
@@ -183,7 +185,7 @@ QUNIT.tests["content_string"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node = HT
-                .createTNode('div')
+                .getNode('div')
                 .addChild("HyperTit");
             break;
         case OBJECT_NODE:
@@ -202,10 +204,10 @@ QUNIT.tests["content_array"]=function () {
     switch (currentContext) {
         case DIRECT_NODE:
             node=HT
-                .createTNode("ul")
+                .getNode("ul")
                 .addChild(
                     HT
-                        .createTNode("li")
+                        .getNode("li")
                         .addChild("item1")
                 );
             break;
@@ -228,11 +230,11 @@ QUNIT.tests["content_array_remove_before"]=function () {
     let node;
     METHODS.init();
     switch (currentContext) {
-        // todo : create direct node tests only
+        // todo : create direct getNode tests only
         case DIRECT_NODE:
         case OBJECT_NODE:
         case ARRAY_NODE:
-            node=HT.createTNode("ul");
+            node=HT.getNode("ul");
             [1,2,3].forEach((index)=> {
                 node.addChild (h({tag:'li', html:'item'+index}))
             });
@@ -247,7 +249,7 @@ QUNIT.tests["content_array_remove_before"]=function () {
 QUNIT.tests_callback["addStyle"]=function () {
     let node;
     METHODS.init();
-    node=HT.createTNode();
+    node=HT.getNode();
     METHODS.build(node,CALLBACK.handler);
     node.addStyle("background-color", "black");
     return ["id1","style","add", "background-color:black"];
@@ -255,7 +257,7 @@ QUNIT.tests_callback["addStyle"]=function () {
 QUNIT.tests_callback["event_postBuild"]=function () {
     let node;
     METHODS.init();
-    node=HT.createTNode();
+    node=HT.getNode();
     METHODS.build(node,CALLBACK.handler);
     node.addEvent("click", ()=>{});
     return ["id1","event","add", "click"];
@@ -264,7 +266,7 @@ QUNIT.tests_callback["event_postBuild"]=function () {
 QUNIT.run();
 /* TEST TEMPLATE */
 /*
-    let node;
+    let getNode;
     METHODS.init();
     switch (currentContext) {
         case DIRECT_NODE:
@@ -274,6 +276,6 @@ QUNIT.run();
         case ARRAY_NODE:
             break;
         default:
-            node=null;
+            getNode=null;
     }
  */

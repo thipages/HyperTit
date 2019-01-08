@@ -9,29 +9,34 @@
 <script src="bin/hypertit.js"></script>
 <script>
     let HT=window.HyperTit;
-    let h=window.HyperTit.node;
+    let h=window.HyperTit.getNode;
+    let li=h({
+        tag:"li",
+        //style:"display:none",
+        html:"ite"
+    });
     let ul = h(
         {
             tag:"ul",
             style:"background-color:#cecece",
             html:[
-                {tag:"li", html:"item1"},
-                {tag:"li", html:"item2"}
+                {
+                    tag:"li",
+                    //style:"display:none",
+                    html:"ite"
+                }
             ]
         }
     );
-    HT.build(ul,"body",callback);
-    let li3 = h(
-        {
-            tag:"li",
-            html:"item3",
-            onclick:()=>console.log("li3 click")
-        }
-    );
-    ul.addChild(li3);
+    let wrapper=h({});
     function callback(node,type,action,data) {
         console.log(node,type,action,data);
     }
+    wrapper.addChild(
+        h({tag:'button',html:'Remove', onclick:()=>ul.removeChild(ul.children[0])})
+    );
+    wrapper.addChild(ul);
+    HT.build(wrapper,"body",callback);
 </script>
 </body>
 </html>

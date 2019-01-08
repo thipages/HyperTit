@@ -10,13 +10,9 @@
  */
 import {TNode} from "./TNode";
 import {TBuilder} from "./TBuilder";
-import {THelper} from "./THelper";
 export class HT {
-    static node(...data:any) :TNode {
-        if (data[0] instanceof Object)
-            return THelper.getObjectNode(data[0]);
-        else
-            return THelper.getArrayNode(<any>data);
+    static getNode(data1?:any, data2?:any, data3?:any) :TNode {
+        return TBuilder.getNodeFrom(data1,data2,data3);
     }
     static build(node:TNode, anchor:string='body', callback:Function=null):void {
         TBuilder.build(node, anchor);
@@ -30,10 +26,9 @@ export class HTest extends HT {
     static resetUid():void {
         TBuilder.resetUid();
     }
-    static createTNode(tag:string='div'):TNode {
-        return TBuilder.node(tag);
-    }
 }
+console.log("test",{} instanceof TNode)
+console.log("test",typeof({}) ==='object')
 interface MyWindow extends Window { HyperTit: HT, HyperTitTest:HTest }
 declare var window: MyWindow;
 window.HyperTit = HT;

@@ -32,22 +32,7 @@ export class TNode {
         if (node.tag==='div' && !this.isAttachedToDom()) this.parentWrappers.unshift(node);
         return this;
     }
-    addStyle (key,value):this {
-        this.styles.set(key,value);
-        if (this.isAttachedToDom()) {
-            document.getElementById(this.id).style[key] = value;
-            if (this.callback) this.callback (this,'style','add',key+':'+value);
-        }
-        return this;
-    }
-    removeStyle (key):this {
-        this.styles.delete(key);
-        if (this.isAttachedToDom()) {
-            document.getElementById(this.id).style[key] = null;
-            if (this.callback) this.callback (this,'style','remove',key);
-        }
-        return this;
-    }
+
     addChild(child:TNode|string):this {
         let targetElement, lastChild, isAttached;
         isAttached=this.isAttachedToDom();
@@ -76,9 +61,39 @@ export class TNode {
         }
         return this;
     }
-    // todo
     removeChild(child:TNode|string):this {
-        //this.children = this.children.filter(item => item !== child);
+        if (this.children.length!=0) {
+            if (this.isAttachedToDom()) {
+                let index = this.children.indexOf(child);
+                if (index>1) document.getElementById(this.id).children[index].remove();
+            }
+            this.children = this.children.filter(item => item !== child);
+        }
+        return this;
+    }
+    removeChildAt(index:number):this {
+        if (index>=0 && index<this.children.length!) {
+            if (this.isAttachedToDom()) {
+                document.getElementById(this.id).children[index].remove();
+            }
+            this.children.splice(index,1);
+        }
+        return this;
+    }
+    addStyle (key,value):this {
+        this.styles.set(key,value);
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).style[key] = value;
+            if (this.callback) this.callback (this,'style','add',key+':'+value);
+        }
+        return this;
+    }
+    removeStyle (key):this {
+        this.styles.delete(key);
+        if (this.isAttachedToDom()) {
+            document.getElementById(this.id).style[key] = null;
+            if (this.callback) this.callback (this,'style','remove',key);
+        }
         return this;
     }
     addEvent(type:string,listener:Function):this {
