@@ -75,6 +75,21 @@ QUNIT.run = function() {
     }
 
 };
+QUnit.test("JS_spread_operator", function (assert) {
+    function spread(...data) {
+        return data;
+    }
+    let cases=[
+        [spread(),0],
+        [spread(""),1,'string'],
+        [spread("A"),1,'string'],
+        [spread({}),1,'object']
+    ];
+    cases.forEach ((aCase)=> {
+        assert.ok(aCase[0].length===aCase[1]);
+        if (aCase.length===3) assert.ok(typeof(aCase[0][0])===aCase[2]);
+    });
+});
 QUNIT.tests["empty"]=function () {
     let node;
     METHODS.init();
@@ -208,6 +223,25 @@ QUNIT.tests["content_array"]=function () {
             node=null;
     }
     return [node,`<ul id="id1"><li id="id2">item1</li></ul>`];
+};
+QUNIT.tests["content_array_remove_before"]=function () {
+    let node;
+    METHODS.init();
+    switch (currentContext) {
+        // todo : create direct node tests only
+        case DIRECT_NODE:
+        case OBJECT_NODE:
+        case ARRAY_NODE:
+            node=HT.createTNode("ul");
+            [1,2,3].forEach((index)=> {
+                node.addChild (h({tag:'li', html:'item'+index}))
+            });
+            node.removeChild(node.children[1]);
+            break;
+        default:
+            node=null;
+    }
+    return [node,`<ul id="id1"><li id="id2">item1</li><li id="id4">item3</li></ul>`];
 };
 
 QUNIT.tests_callback["addStyle"]=function () {
