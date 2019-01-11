@@ -8,8 +8,8 @@
  *
  *	 HyperTit Tit's hypertext
  */
-import {TNode} from "../TNode";
-import {TBuilder} from "../TBuilder";
+import {TNode} from "./TNode";
+import {TBuilder} from "./TBuilder";
 export class ObjectFormat {
     static getNode(data: object): TNode {
         let node:TNode, html;

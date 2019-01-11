@@ -8,8 +8,8 @@
  *
  *	 HyperTit Tit's hypertext
  */
-import {TNode} from "../TNode";
-import {TBuilder} from "../TBuilder";
+import {TNode} from "./TNode";
+import {TBuilder} from "./TBuilder";
 export class ExtendedTagFormat {
     static getNode(extendedTag?:string,content?:any,events?:object): TNode {
         return extendedTag===undefined

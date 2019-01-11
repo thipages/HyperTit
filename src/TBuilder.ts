@@ -9,8 +9,8 @@
  *	 HyperTit Tit's hypertext
  */
 import {TNode} from "./TNode";
-import {ObjectFormat} from "./format/ObjectFormat";
-import {ExtendedTagFormat} from "./format/ExtendedTagFormat";
+import {ObjectFormat} from "./ObjectFormat";
+import {ExtendedTagFormat} from "./ExtendedTagFormat";
 export class TBuilder {
     private static _callback:Function;
     private static uid_count=0;
