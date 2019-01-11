@@ -10,14 +10,20 @@
  */
 import {TBuilder} from "./TBuilder";
 export class TNode {
+    static PATTERN_STYLE=/((\w|-)+):(\w|#|-)+/g;
+    static PATTERN_PROPERTY=/([\w|-]+=[\w|,-]+)|[\w|-]+/g;
+    static PATTERN_CLASS=/[\s|;]/g;
+
     parent:string|TNode;
+    events:Map<string,Function>;
+    id:string;
+
     children:Array<TNode|string>;
-    classes:Array<string>;
+    classes:Set<string>;
     parentWrappers:Array<TNode>;
     styles:Map<string,string>;
     properties:Map<string,string>;
-    events:Map<string,Function>;
-    id:string;
+
     constructor(readonly tag:string, private readonly callback:Function) {
         this.id=TBuilder.uid();
         this.parent=null;
@@ -25,14 +31,13 @@ export class TNode {
         this.parentWrappers=Array<TNode>();
         this.styles=new Map<string,string>();
         this.properties=new Map<string,string>();
-        this.classes=Array<string>();
+        this.classes=new Set<string>();
         this.events=new Map<string,Function>();
     }
     wrap(node:TNode):this {
         if (node.tag==='div' && !this.isAttachedToDom()) this.parentWrappers.unshift(node);
         return this;
     }
-
     addChild(child:TNode|string):this {
         let targetElement, lastChild, isAttached;
         isAttached=this.isAttachedToDom();
@@ -80,11 +85,27 @@ export class TNode {
         }
         return this;
     }
-    addStyle (key,value):this {
-        this.styles.set(key,value);
-        if (this.isAttachedToDom()) {
-            document.getElementById(this.id).style[key] = value;
-            if (this.callback) this.callback (this,'style','add',key+':'+value);
+    addStyle (keyOrRawStyle,value=null):this {
+        let matches, attached=null;
+        if (keyOrRawStyle) {
+            if (value !== null && value.trim() !== "") {
+                this.styles.set(keyOrRawStyle, value);
+                if (attached === null) attached = this.isAttachedToDom();
+                if (attached) this.addStyleToDom(keyOrRawStyle, value);
+            } else {
+                matches=keyOrRawStyle.match(TNode.PATTERN_STYLE);
+                if (matches) {
+                    matches.forEach((pattern) => {
+                        let styles = pattern.split(":");
+                        this.styles.set(styles[0], styles[1]);
+                        if (attached === null) attached = this.isAttachedToDom();
+                        if (attached) this.addStyleToDom(styles[0], styles[1]);
+                    });
+                } else {
+                    // todo : send warning
+                    console.log("No match: "+keyOrRawStyle);
+                }
+            }
         }
         return this;
     }
@@ -96,6 +117,7 @@ export class TNode {
         }
         return this;
     }
+    // todo : optimization... replace Map formalism by Object one (type is just a string+extended format compatible)
     addEvent(type:string,listener:Function):this {
         this.events.set(type,listener);
         if (this.isAttachedToDom()) {
@@ -112,28 +134,45 @@ export class TNode {
         this.events.delete(type);
         return this;
     }
-    addClass(clazz:string) {
-        this.classes.push(clazz);
-        if (this.isAttachedToDom()) {
-            document.getElementById(this.id).classList.add(clazz);
-            if (this.callback) this.callback (this,'class','add',clazz);
+    addClass(rawClassOrClass:string):this {
+        let attached=null;
+        if (rawClassOrClass) {
+            rawClassOrClass.split(TNode.PATTERN_CLASS).forEach((clazz) => {
+                if (!this.classes.has(clazz)) {
+                    if (attached === null) attached = this.isAttachedToDom();
+                    this.classes.add(clazz);
+                    if (attached) this.addClassToDom(clazz);
+                }
+            });
         }
         return this;
     }
     removeClass(clazz:string) {
-        this.classes = this.classes.filter(item => item !== clazz);
+        this.classes.delete(clazz);
         if (this.isAttachedToDom()) {
             document.getElementById(this.id).classList.remove(clazz);
             if (this.callback) this.callback (this,'class','remove',clazz);
         }
         return this;
     }
-    addProperty(property:string, value:string) {
-        if (property!=='class' && property!=='style') {
-            this.properties.set(property,value);
-            if (this.isAttachedToDom()) {
-                document.getElementById(this.id).setAttribute(property, value);
-                if (this.callback) this.callback (this,'property','add',property+"="+value);
+    addProperty(keyOrRawProperty:string, value:string=null) {
+        let attached=null;
+        if (keyOrRawProperty) {
+            if (value !== null) {
+                if (keyOrRawProperty !== "class" && keyOrRawProperty !== "style") {
+                    this.properties.set(keyOrRawProperty, value);
+                    if (attached === null) attached = this.isAttachedToDom();
+                    if (attached) this.addPropertyToDom(keyOrRawProperty, value);
+                }
+            } else {
+                keyOrRawProperty.match(TNode.PATTERN_PROPERTY).forEach((pattern) => {
+                    let properties = pattern.split("=");
+                    properties[0]=properties[0].trim();
+                    if (properties.length==1) properties.push(properties[0]);
+                    this.properties.set(properties[0], properties[1]);
+                    if (attached === null) attached = this.isAttachedToDom();
+                    if (attached) this.addPropertyToDom(properties[0], properties[1]);
+                });
             }
         }
         return this;
@@ -148,11 +187,27 @@ export class TNode {
         }
         return this;
     }
+    getProperty(property:string="value") {
+        return document.getElementById(this.id)[property];
+    }
     isAttachedToDom():boolean {
         let node:TNode=this;
         while (true) {
             if (node.parent instanceof TNode) node=node.parent; else break;
         }
         return (typeof(node.parent)==='string');
+    }
+    private addStyleToDom(key:string,value:string):void {
+        document.getElementById(this.id).style[key] = value;
+        if (this.callback) this.callback (this,'style','add',key+':'+value);
+    }
+    private addPropertyToDom(key:string,value:string):void {
+        //document.getElementById(this.id).setAttribute(key, value);
+        document.getElementById(this.id)[key]=value;
+        if (this.callback) this.callback (this,'property','add',value!==null?key+"="+value:key);
+    }
+    private addClassToDom(clazz:string):void {
+        document.getElementById(this.id).classList.add(clazz);
+        if (this.callback) this.callback(this, 'class', 'add', clazz);
     }
 }

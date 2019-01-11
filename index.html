@@ -10,33 +10,28 @@
 <script>
     let HT=window.HyperTit;
     let h=window.HyperTit.getNode;
-    let li=h({
-        tag:"li",
-        //style:"display:none",
-        html:"ite"
-    });
-    let ul = h(
-        {
-            tag:"ul",
-            style:"background-color:#cecece",
-            html:[
-                {
-                    tag:"li",
-                    //style:"display:none",
-                    html:"ite"
-                }
-            ]
-        }
-    );
+    let input=h("input[type=text]",null,{keyup:(event)=>_input(event)});
+    input.addProperty('value',"Thierry");
+    let ul = h("ul");
     let wrapper=h({});
     function callback(node,type,action,data) {
-        console.log(node,type,action,data);
+        console.log(node.tag,type,action,data);
     }
-    wrapper.addChild(
-        h({tag:'button',html:'Remove', onclick:()=>ul.removeChild(ul.children[0])})
-    );
+    wrapper.addChild(input).addChild(ul);
     wrapper.addChild(ul);
     HT.build(wrapper,"body",callback);
+
+    input.addProperty('value', "lklkl");
+
+    function _input(event) {
+        if (event.key==='Enter') {
+            let text=input.getProperty();
+            if (text!=="") {
+                ul.addChild(h("li", text));
+                input.addProperty('value', "");
+            }
+        }
+    }
 </script>
 </body>
 </html>

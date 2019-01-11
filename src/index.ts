@@ -27,8 +27,6 @@ export class HTest extends HT {
         TBuilder.resetUid();
     }
 }
-console.log("test",{} instanceof TNode)
-console.log("test",typeof({}) ==='object')
 interface MyWindow extends Window { HyperTit: HT, HyperTitTest:HTest }
 declare var window: MyWindow;
 window.HyperTit = HT;
