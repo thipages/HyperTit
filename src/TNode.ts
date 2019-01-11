@@ -59,7 +59,7 @@ export class TNode {
                         targetElement.insertAdjacentHTML("afterend", child.getNodeHtml());
                     }
                 }
-                TBuilder.registerEvents(child);
+                child.registerEvents();
             }
         }
         return this;
@@ -253,6 +253,18 @@ export class TNode {
             return [`<${this.tag} ${attrs.join(" ")}>`, children, `</${this.tag}>`];
         } else {
             return [`<${this.tag} ${attrs.join(" ")}/>`, "", ""];
+        }
+    }
+    public registerEvents (add=true):void {
+        this.events.forEach((listener, type) => {
+            if (add) {
+                document.getElementById(this.id).addEventListener(type,<any>listener);
+            } else {
+                document.getElementById(this.id).removeEventListener(type,<any>listener);
+            }
+        });
+        for (let child of this.children) {
+            if (child instanceof TNode) child.registerEvents(add);
         }
     }
     private static isVoidElement(tag:string):boolean {

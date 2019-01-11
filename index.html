@@ -11,7 +11,7 @@
     let HT=window.HyperTit;
     let h=window.HyperTit.getNode;
     let input=h("input[type=text]",null,{keyup:(event)=>_input(event)});
-    input.addProperty('value',"Thierry");
+
     let ul = h("ul");
     let wrapper=h({});
     function callback(node,type,action,data) {
@@ -21,7 +21,6 @@
     wrapper.addChild(ul);
     HT.build(wrapper,"body",callback);
 
-    input.addProperty('value', "lklkl");
 
     function _input(event) {
         if (event.key==='Enter') {

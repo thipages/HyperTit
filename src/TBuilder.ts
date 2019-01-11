@@ -27,7 +27,6 @@ export class TBuilder {
     static resetUid() {
         TBuilder.uid_count=0;
     }
-
     static getNode(tag:string='div'):TNode {
         return new TNode(tag, TBuilder.nodeCallback);
     }
@@ -64,7 +63,6 @@ export class TBuilder {
         }
         return node;
     }
-
     static build(node:TNode, anchor="body") {
         let id, element;
         if (anchor.substr(0,1)==="#") {
@@ -78,20 +76,6 @@ export class TBuilder {
         }
         node.parent = id;
         element.innerHTML = node.getNodeHtml();
-        TBuilder.registerEvents(node);
+        node.registerEvents();
     }
-    static registerEvents (node:TNode, register=true):void {
-        node.events.forEach((listener, type) => {
-            if (register) {
-                document.getElementById(node.id).addEventListener(type,<any>listener);
-            } else {
-                document.getElementById(node.id).removeEventListener(type,<any>listener);
-            }
-        });
-        for (let child of node.children) {
-            if (child instanceof TNode) TBuilder.registerEvents(child,register);
-        }
-    }
-
-
 }
