@@ -21,7 +21,7 @@ export class HT {
 }
 export class HTest extends HT {
     static getNodeHtml(node:TNode):string {
-        return TBuilder.getNodeHtml(node)
+        return node.getNodeHtml()
     }
     static resetUid():void {
         TBuilder.resetUid();

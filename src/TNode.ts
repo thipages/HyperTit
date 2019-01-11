@@ -13,16 +13,14 @@ export class TNode {
     static PATTERN_STYLE=/((\w|-)+):(\w|#|-)+/g;
     static PATTERN_PROPERTY=/([\w|-]+=[\w|,-]+)|[\w|-]+/g;
     static PATTERN_CLASS=/[\s|;]/g;
-
     parent:string|TNode;
     events:Map<string,Function>;
     id:string;
-
-    children:Array<TNode|string>;
-    classes:Set<string>;
-    parentWrappers:Array<TNode>;
-    styles:Map<string,string>;
-    properties:Map<string,string>;
+    private children:Array<TNode|string>;
+    private classes:Set<string>;
+    private readonly parentWrappers:Array<TNode>;
+    private styles:Map<string,string>;
+    private properties:Map<string,string>;
 
     constructor(readonly tag:string, private readonly callback:Function) {
         this.id=TBuilder.uid();
@@ -53,12 +51,12 @@ export class TNode {
             child.parent=this;
             if (isAttached) {
                 if (this.children.length === 1) {
-                    document.getElementById(this.id).innerHTML = TBuilder.getNodeHtml(child);
+                    document.getElementById(this.id).innerHTML = child.getNodeHtml();
                 } else {
                     lastChild = this.children[this.children.length - 2];
                     if (lastChild instanceof TNode) {
                         targetElement = document.getElementById(lastChild.id);
-                        targetElement.insertAdjacentHTML("afterend", TBuilder.getNodeHtml(child));
+                        targetElement.insertAdjacentHTML("afterend", child.getNodeHtml());
                     }
                 }
                 TBuilder.registerEvents(child);
@@ -202,12 +200,65 @@ export class TNode {
         if (this.callback) this.callback (this,'style','add',key+':'+value);
     }
     private addPropertyToDom(key:string,value:string):void {
-        //document.getElementById(this.id).setAttribute(key, value);
         document.getElementById(this.id)[key]=value;
         if (this.callback) this.callback (this,'property','add',value!==null?key+"="+value:key);
     }
     private addClassToDom(clazz:string):void {
         document.getElementById(this.id).classList.add(clazz);
         if (this.callback) this.callback(this, 'class', 'add', clazz);
+    }
+    public getNodeHtml():string {
+        let parts:[string,string,string];
+        // WRAPPERS
+        let wrapperParts=["","",""];
+        for (let wrapper of this.parentWrappers) {
+            parts=wrapper.getParts();
+            wrapperParts[0]+=parts[0];
+            wrapperParts[2]=parts[2]+wrapperParts[2];
+        }
+        wrapperParts[1]=this.getParts().join("");
+        return wrapperParts.join("");
+    }
+    public getParts():[string,string,string] {
+        let properties:any, styles:string, classes:string, children:string, attrs:Array<string>;
+        attrs=Array<string>();
+        // ID
+        if (this.id) attrs.push(`id="${this.id}"`);
+        // PROPERTIES
+        properties=Array<string>();
+        this.properties.forEach((value,key)=> {
+            properties.push(`${key}="${value}"`)
+        });
+        properties=properties.join(" ");
+        if (properties!=="") attrs.push(properties);
+        // STYLES
+        styles="";
+        this.styles.forEach((value,key)=> {
+            styles+=key+":"+value+";";
+        });
+        if (styles!=="") attrs.push(`style="${styles}"`);
+        // CLASSES
+        classes=Array.from(this.classes).join(" ");
+        if (classes!=="") attrs.push(`class="${classes}"`);
+        // CHILDREN OR VOID ELEMENTS
+        if (!TNode.isVoidElement(this.tag)) {
+            children = "";
+            for (let child of this.children) {
+                if (child instanceof TNode) {
+                    children += child.getNodeHtml();
+                } else {
+                    children += child;
+                }
+            }
+            return [`<${this.tag} ${attrs.join(" ")}>`, children, `</${this.tag}>`];
+        } else {
+            return [`<${this.tag} ${attrs.join(" ")}/>`, "", ""];
+        }
+    }
+    private static isVoidElement(tag:string):boolean {
+        return [
+            "area","base","br","col","embed","hr","img",
+            "input","link","meta","param","source","track","wbr"
+        ].indexOf(tag.toLowerCase()) > -1;
     }
 }

@@ -77,7 +77,7 @@ export class TBuilder {
             // todo: see DOMinus code
         }
         node.parent = id;
-        element.innerHTML = TBuilder.getNodeHtml(node);
+        element.innerHTML = node.getNodeHtml();
         TBuilder.registerEvents(node);
     }
     static registerEvents (node:TNode, register=true):void {
@@ -91,61 +91,6 @@ export class TBuilder {
         for (let child of node.children) {
             if (child instanceof TNode) TBuilder.registerEvents(child,register);
         }
-    }
-
-    static getNodeHtml(node:TNode):string {
-        let parts:[string,string,string];
-        // WRAPPERS
-        let wrapperParts=["","",""];
-        for (let wrapper of node.parentWrappers) {
-            parts=TBuilder.getParts(wrapper);
-            wrapperParts[0]+=parts[0];
-            wrapperParts[2]=parts[2]+wrapperParts[2];
-        }
-        wrapperParts[1]=TBuilder.getParts(node).join("");
-        return wrapperParts.join("");
-    }
-    private static getParts(node:TNode):[string,string,string] {
-        let properties:any, styles:string, classes:string, children:string, attrs:Array<string>;
-        attrs=Array<string>();
-        // ID
-        if (node.id) attrs.push(`id="${node.id}"`);
-        // PROPERTIES
-        properties=Array<string>();
-        node.properties.forEach((value,key)=> {
-            properties.push(`${key}="${value}"`)
-        });
-        properties=properties.join(" ");
-        if (properties!=="") attrs.push(properties);
-        // STYLES
-        styles="";
-        node.styles.forEach((value,key)=> {
-            styles+=key+":"+value+";";
-        });
-        if (styles!=="") attrs.push(`style="${styles}"`);
-        // CLASSES
-        classes=Array.from(node.classes).join(" ");
-        if (classes!=="") attrs.push(`class="${classes}"`);
-        // CHILDREN OR VOID ELEMENTS
-        if (!TBuilder.isVoidElement(node.tag)) {
-            children = "";
-            for (let child of node.children) {
-                if (child instanceof TNode) {
-                    children += TBuilder.getNodeHtml(child);
-                } else {
-                    children += child;
-                }
-            }
-            return [`<${node.tag} ${attrs.join(" ")}>`, children, `</${node.tag}>`];
-        } else {
-            return [`<${node.tag} ${attrs.join(" ")}/>`, "", ""];
-        }
-    }
-    private static isVoidElement(tag:string):boolean {
-        return [
-            "area","base","br","col","embed","hr","img",
-            "input","link","meta","param","source","track","wbr"
-        ].indexOf(tag.toLowerCase()) > -1;
     }
 
 
